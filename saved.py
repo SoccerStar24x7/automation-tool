@@ -1,47 +1,47 @@
-import keyboard as builtin_kbd # too see if a key is pressed at a spontaneous time
-
-import pynput.keyboard as keyboards
-
-import pynput.mouse as mouse
-
+import pyautogui as gui
+import keyboard as builtin_kbd
+from pynput import mouse
+from pynput import keyboard as pynput_kbd
+from pynput.keyboard import Key, Controller
 import time
 import json
 
-# keyboard shit is still fucked
-# became more dependant on pynput instead of pyautogui; old version is in "saved.py"
+# keyboard shit is fucked
 
 
-keyboard = keyboards.Controller()
-smouse = mouse.Controller()
+
+screenWidth, screenHeight = gui.size() # Get the size of the primary monitor.
+
+keyboard = Controller()
 
 def identify_modifier(key):
     if key == "Key.enter":
-        keyboard.press(keyboards.Key.enter)
-        keyboard.release(keyboards.Key.enter)
+        keyboard.press(Key.enter)
+        keyboard.release(Key.enter)
 
     elif key == "Key.space":
-        keyboard.press(keyboards.Key.space)
-        keyboard.release(keyboards.Key.space)
+        keyboard.press(Key.space)
+        keyboard.release(Key.space)
 
     elif key == "Key.shift" or "Key.shift_r" or "Key.shift_l":
-        keyboard.press(keyboards.Key.shift)
-        keyboard.release(keyboards.Key.shift)
+        keyboard.press(Key.shift)
+        keyboard.release(Key.shift)
 
     elif key == "Key.tab":
-        keyboard.press(keyboards.Key.tab)
-        keyboard.release(keyboards.Key.tab)
+        keyboard.press(Key.tab)
+        keyboard.release(Key.tab)
 
     elif key == "Key.ctrl_l" or "Key.ctrl_r" or "Key.ctrl":
-        keyboard.press(keyboards.Key.ctrl)
-        keyboard.release(keyboards.Key.ctrl)
+        keyboard.press(Key.ctrl)
+        keyboard.release(Key.ctrl)
 
     elif key == "Key.caps_lock":
-        keyboard.press(keyboards.Key.caps_lock)
-        keyboard.release(keyboards.Key.caps_lock)
+        keyboard.press(Key.caps_lock)
+        keyboard.release(Key.caps_lock)
 
     elif key == "Key.alt" or "Key.alt_r":
-        keyboard.press(keyboards.Key.alt)
-        keyboard.release(keyboards.Key.alt)
+        keyboard.press(Key.alt)
+        keyboard.release(Key.alt)
 
     else:
         keyboard.type(key)
@@ -89,7 +89,7 @@ def watch():
 
 
     mouse_listener = mouse.Listener(on_click=on_mouse_click)
-    keyboard_listener = keyboards.Listener(on_press=on_kbd_press)
+    keyboard_listener = pynput_kbd.Listener(on_press=on_kbd_press)
     mouse_listener.start()
     keyboard_listener.start()
 
@@ -108,7 +108,7 @@ def watch():
         curTime = round((time.time() - orgTime), 2) # gets the time during that loop, and subtracts it by original
                                                     # time to get time since recording started
 
-        curMouseX, curMouseY = smouse.position # gets the mouse position
+        curMouseX, curMouseY = gui.position() # gets the mouse position
 
 
         if f"{curTime}" not in events:
@@ -151,18 +151,17 @@ def do():
         if type(logs[eventTime]) == list: # if the event recorded the mouse position
             mouseX, mouseY = event
 
-            smouse.position = mouseX, mouseY
+            gui.moveTo(mouseX, mouseY)
 
         elif "click" in event:
-
             if event == "Lclick": # if the event recorded a left click
-                smouse.click(mouse.Button.left, 1)
+                gui.click(button="left")
         
             elif event == "Rclick": # if the event recorded a right click
-                smouse.click(mouse.Button.right, 1)
+                gui.click(button="right")
 
             elif event == "Mclick": # if the event recorded a right click
-                smouse.click(mouse.Button.middle, 1)
+                gui.click(button="middle")
         
         else:
             identify_modifier(event)           
