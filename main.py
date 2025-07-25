@@ -1,4 +1,4 @@
-import keyboard as builtin_kbd # too see if a key is pressed at a spontaneous time
+import keyboard as builtin_kbd # to see if a key is pressed at a spontaneous time
 
 import pynput.keyboard as keyboards
 
@@ -7,44 +7,61 @@ import pynput.mouse as mouse
 import time
 import json
 
-# keyboard shit is still fucked
-# became more dependant on pynput instead of pyautogui; old version is in "saved.py"
-
+# Remove last ctrl by using for loop starting from end of scripts.json, and removing the first value that's ctrl
 
 keyboard = keyboards.Controller()
 smouse = mouse.Controller()
 
 def identify_modifier(key):
+    print(f"we should print {key} with type {type(key)}")
     if key == "Key.enter":
+        print("enter")
         keyboard.press(keyboards.Key.enter)
+
         keyboard.release(keyboards.Key.enter)
 
     elif key == "Key.space":
+        print("space")
         keyboard.press(keyboards.Key.space)
         keyboard.release(keyboards.Key.space)
 
-    elif key == "Key.shift" or "Key.shift_r" or "Key.shift_l":
+    elif key in ["Key.shift", "Key.shift_r", "Key.shift_l"]:
+        print("shift")
         keyboard.press(keyboards.Key.shift)
         keyboard.release(keyboards.Key.shift)
 
     elif key == "Key.tab":
+        print("tab")
         keyboard.press(keyboards.Key.tab)
         keyboard.release(keyboards.Key.tab)
 
-    elif key == "Key.ctrl_l" or "Key.ctrl_r" or "Key.ctrl":
+    elif key in ["Key.ctrl_l", "Key.ctrl_r", "Key.ctrl"]:
+        print("ctrl")
         keyboard.press(keyboards.Key.ctrl)
         keyboard.release(keyboards.Key.ctrl)
 
     elif key == "Key.caps_lock":
+        print("caps lock")
         keyboard.press(keyboards.Key.caps_lock)
         keyboard.release(keyboards.Key.caps_lock)
 
-    elif key == "Key.alt" or "Key.alt_r":
+    elif key == "Key.backspace":
+        print("caps lock")
+        keyboard.press(keyboards.Key.backspace)
+        keyboard.release(keyboards.Key.backspace)
+
+    elif key in ["Key.alt", "Key.alt_r"]:
+        print("alt")
         keyboard.press(keyboards.Key.alt)
         keyboard.release(keyboards.Key.alt)
 
     else:
-        keyboard.type(key)
+        print("REALY PRINT")
+
+        # chatgpt magic
+        keycode = keyboards.KeyCode.from_char(key.strip("'"))  # strip quotes if needed
+        keyboard.press(keycode)
+        keyboard.release(keycode)
         
 
 
@@ -58,7 +75,6 @@ def watch():
     orgTime = time.time() # original time when program was started
 
     def on_mouse_click(x, y, button, pressed):
-        orgTime = time.time() # original time when program was started
 
         if button == mouse.Button.left: # if left button was clicked
 
@@ -96,7 +112,6 @@ def watch():
     tempTime = 0
 
     while not(builtin_kbd.is_pressed('ctrl+4')): # if Ctrl+L is not pressed (Ctrl+L is hotkey to end recording)
-
         
         if tempTime != 4:
             tempTime += 1
@@ -137,9 +152,23 @@ def do():
     orgTime = time.time()
 
     for eventTime in logs: 
-        print(f"{eventTime}: {logs[eventTime]}")
+        if builtin_kbd.is_pressed('ctrl+4'):
+            print("higher authority doesn't like us 😔")
+            exit()
 
         curTime = round((time.time() - orgTime), 2)
+
+        print(f"{float(eventTime)}-{curTime} = {float(eventTime)-curTime}")
+
+        try:
+            time.sleep(float(eventTime)-curTime)
+
+        except ValueError:
+            print("uh oh")
+            
+
+        print(f"{eventTime}: {logs[eventTime]}")
+
         print(curTime)
 
 
@@ -148,7 +177,7 @@ def do():
 
         event = logs[eventTime]
 
-        if type(logs[eventTime]) == list: # if the event recorded the mouse position
+        if type(event) == list: # if the event recorded the mouse position
             mouseX, mouseY = event
 
             smouse.position = mouseX, mouseY
@@ -165,10 +194,11 @@ def do():
                 smouse.click(mouse.Button.middle, 1)
         
         else:
-            identify_modifier(event)           
+            print("PRINT TIME")
+            identify_modifier(event)
             
-                
-                
+            
+            
 def main():
     func = input("What operation do you want (watch or do)?: ")
     print()
