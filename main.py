@@ -13,50 +13,40 @@ keyboard = keyboards.Controller()
 smouse = mouse.Controller()
 
 def identify_modifier(key):
-    print(f"we should print {key} with type {type(key)}")
     if key == "Key.enter":
-        print("enter")
         keyboard.press(keyboards.Key.enter)
 
         keyboard.release(keyboards.Key.enter)
 
     elif key == "Key.space":
-        print("space")
         keyboard.press(keyboards.Key.space)
         keyboard.release(keyboards.Key.space)
 
     elif key in ["Key.shift", "Key.shift_r", "Key.shift_l"]:
-        print("shift")
         keyboard.press(keyboards.Key.shift)
         keyboard.release(keyboards.Key.shift)
 
     elif key == "Key.tab":
-        print("tab")
         keyboard.press(keyboards.Key.tab)
         keyboard.release(keyboards.Key.tab)
 
     elif key in ["Key.ctrl_l", "Key.ctrl_r", "Key.ctrl"]:
-        print("ctrl")
         keyboard.press(keyboards.Key.ctrl)
         keyboard.release(keyboards.Key.ctrl)
 
     elif key == "Key.caps_lock":
-        print("caps lock")
         keyboard.press(keyboards.Key.caps_lock)
         keyboard.release(keyboards.Key.caps_lock)
 
     elif key == "Key.backspace":
-        print("caps lock")
         keyboard.press(keyboards.Key.backspace)
         keyboard.release(keyboards.Key.backspace)
 
     elif key in ["Key.alt", "Key.alt_r"]:
-        print("alt")
         keyboard.press(keyboards.Key.alt)
         keyboard.release(keyboards.Key.alt)
 
     else:
-        print("REALY PRINT")
 
         # chatgpt magic
         keycode = keyboards.KeyCode.from_char(key.strip("'"))  # strip quotes if needed
@@ -98,7 +88,6 @@ def watch():
     def on_kbd_press(key):
 
         curTime = round((time.time() - orgTime), 2) # gets the time
-        print(f"{key} key pressed at {curTime}.")
 
         events[f"{curTime}"] = f"{key}"
 
@@ -153,27 +142,18 @@ def do():
 
     for eventTime in logs: 
         if builtin_kbd.is_pressed('ctrl+4'):
-            print("higher authority doesn't like us 😔")
+            print("Program ended by user.")
             exit()
 
         curTime = round((time.time() - orgTime), 2)
 
-        print(f"{float(eventTime)}-{curTime} = {float(eventTime)-curTime}")
 
         try:
             time.sleep(float(eventTime)-curTime)
 
         except ValueError:
-            print("uh oh")
+            pass
             
-
-        print(f"{eventTime}: {logs[eventTime]}")
-
-        print(curTime)
-
-
-        # print((float(eventTime) - curTime))
-        # time.sleep((float(eventTime) - curTime)) # waits until the time is right
 
         event = logs[eventTime]
 
@@ -194,7 +174,6 @@ def do():
                 smouse.click(mouse.Button.middle, 1)
         
         else:
-            print("PRINT TIME")
             identify_modifier(event)
             
             
@@ -210,6 +189,6 @@ def main():
         do()
 
     else:
-        print("dumbahh")
+        print("Program exiting due to invalid input.")
 
 main()
